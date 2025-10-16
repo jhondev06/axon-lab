@@ -1,0 +1,370 @@
+# AXON Configuration File
+project: "AXON Financial ML Pipeline"
+version: "1.0.0"
+llm_local: true  # toggle para habilitar stub local tiny_llm
+
+# Data configuration
+data:
+   sources: ["yahoo", "alpha_vantage", "binance_ws", "synthetic"]  # prioridade automática
+   symbols: ["BTC-USD"]   # suporta múltiplos símbolos
+   interval: "5m"  # 1m, 5m, 15m, 30m, 1h
+   lookback_days: 60
+   quality:
+     min_rows_test: 50
+     drop_na_policy: "strict"
+     min_quality_score: 80  # pontuação mínima de qualidade aceitável
+     gap_threshold_pct: 5   # threshold para gaps temporais (%)
+   cache:
+     enabled: true
+     dir: "data/cache"
+     memory_ttl: 300   # 5 minutos para cache em memória
+     disk_ttl: 3600    # 1 hora para cache em disco
+     compression: "lzma"  # lzma, gzip, snappy
+   raw_path: "data/raw"
+   processed_path: "data/processed"
+   start_date: "2019-01-01"
+   end_date: "2024-12-31"
+   timeframe: "1m"
+
+   # Configurações específicas por fonte
+   yahoo:
+     max_chunk_days: 7  # limite para dados de 1m
+     rate_limit_delay: 1  # segundos entre requests
+     retry_attempts: 3
+
+   alpha_vantage:
+     api_key_env: "ALPHA_VANTAGE_API_KEY"
+     rate_limit: 5  # calls per minute (free tier)
+     timeout: 30  # segundos
+     retry_attempts: 3
+     supported_intervals: ["1min", "5min", "15min", "30min", "60min"]
+
+   binance_ws:
+     raw_dir: "data/raw/rt"
+     reconnect_attempts: 10
+     reconnect_delay: 5  # segundos
+     health_check_interval: 30  # segundos
+     symbol_mappings:
+       "BTC-USD": "BTCUSDT"
+       "ETH-USD": "ETHUSDT"
+       "BNB-USD": "BNBUSDT"
+       "ADA-USD": "ADAUSDT"
+       "SOL-USD": "SOLUSDT"
+       "DOT-USD": "DOTUSDT"
+       "DOGE-USD": "DOGEUSDT"
+       "AVAX-USD": "AVAXUSDT"
+
+   synthetic:
+     generator_script: "tools/make_fake_data.py"
+     fallback_enabled: true
+
+# Feature engineering
+features:
+  returns: ["1m", "5m", "15m", "1h"]
+  ema_periods: [5, 20, 50]
+  rsi_period: 14
+  imbalance_window: 10
+  bollinger_period: 20
+  bollinger_std: 2
+
+# Labels
+labels:
+  method: "sign_return_h"
+  horizon: "15m"
+  barrier_method: "triple_barrier"
+  take_profit: 0.02
+  stop_loss: 0.01
+  timeout: "4h"
+
+# Model configuration
+models:
+  train: ["lightgbm", "randomforest", "xgboost", "catboost"]
+  lightgbm:
+    n_estimators: 100
+    learning_rate: 0.05
+    num_leaves: 31
+    max_depth: -1
+    min_child_samples: 20
+    subsample: 0.8
+    colsample_bytree: 0.8
+    reg_alpha: 0.1
+    reg_lambda: 0.1
+  xgboost:
+    n_estimators: 100
+    learning_rate: 0.1
+    max_depth: 6
+    min_child_weight: 1
+    subsample: 0.8
+    colsample_bytree: 0.8
+    gamma: 0
+    reg_alpha: 0
+    reg_lambda: 1
+  catboost:
+    iterations: 1000
+    learning_rate: 0.03
+    depth: 6
+    l2_leaf_reg: 3
+    random_strength: 1
+    bagging_temperature: 1
+    border_count: 254
+    grow_policy: "SymmetricTree"
+  randomforest:
+    n_estimators: 100
+    max_depth: 10
+    min_samples_split: 5
+    min_samples_leaf: 2
+    max_features: "sqrt"
+  lstm:
+    hidden_size: 64
+    num_layers: 2
+    dropout: 0.2
+    bidirectional: true
+    sequence_length: 20
+    batch_size: 32
+    learning_rate: 0.001
+    weight_decay: 1e-4
+    epochs: 100
+    patience: 10
+
+# Neural Network Features
+nn_features:
+ sequence_length: 20
+ stride: 1
+ val_split: 0.2
+ test_split: 0.1
+ normalization: "minmax"  # minmax, standard, robust
+
+# Backtesting
+backtest:
+  strategy: "long_if_prob_gt"
+  threshold: 0.55
+  position_size: 0.1
+  take_profit: 0.02
+  stop_loss: 0.01
+  timeout: "4h"
+  commission: 0.001
+
+# GPU configuration
+gpu:
+  enable: true
+  platform_id: 0
+  device_id: 0
+
+# Output paths
+outputs:
+  models: "outputs/models"
+  artifacts: "outputs/artifacts"
+  reports: "outputs/reports"
+  ledgers: "outputs/ledgers"
+
+# Target column
+target: "y"
+
+# Intelligence layer
+intelligence:
+   error_lens:
+     volatility_window: 20
+     trend_window: 10
+     regime_threshold: 0.5
+   memory:
+     max_entries: 1000
+     decay_factor: 0.95
+   decision:
+     min_sharpe: 0.5
+     min_win_rate: 0.45
+     max_drawdown: 0.15
+
+# Notifications (Telegram)
+telegram:
+  enabled: true  # toggle - ativado por padrão
+  bot_token_env: "TELEGRAM_BOT_TOKEN"  # var de ambiente
+  chat_id_env: "TELEGRAM_CHAT_ID"      # var de ambiente
+  notifications:
+    pipeline_start: true
+    pipeline_end: true
+    model_promotion: true
+    gate_failures: true
+    errors: true
+
+# Optimization configuration
+optimization:
+   enabled: true  # ativar otimização automática
+   n_trials: 150  # número de trials (50-200)
+   models: ["lightgbm", "randomforest", "xgboost", "catboost"]  # modelos para otimizar
+   method: "parallel"  # auto, optuna, grid_search, bayesian, parallel, pareto
+
+   # Multi-objective optimization
+   multi_objective: true
+   objectives:
+     - metric: "sharpe_ratio"
+       weight: 0.7
+       direction: "maximize"
+       target: 1.5  # target mínimo
+     - metric: "max_drawdown"
+       weight: 0.3
+       direction: "minimize"
+       target: 0.15  # limite máximo
+
+   # Constraints and limits
+   constraints:
+     max_drawdown_limit: 0.15  # 15% máximo drawdown
+     min_sharpe_ratio: 1.0
+     max_optimization_time: 3600  # segundos
+
+   # Optuna-specific settings
+   optuna:
+     pruning: true
+     early_stopping_rounds: 20
+     sampler: "tpe"  # tpe, random, cmaes, nsga2
+     pruner: "median"  # median, hyperband, patient
+     study_name: "axon_hyperparameter_optimization"
+     direction: "maximize"
+
+   # Grid Search settings (for RandomForest)
+   grid_search:
+     cv_folds: 5
+     scoring: "neg_mean_squared_error"
+     n_jobs: -1
+
+   # Bayesian optimization settings (alternative)
+   bayesian:
+     base_estimator: "gp"  # gp, rf, et, gbrt
+     acq_func: "gp_hedge"  # ucb, ei, poi, gp_hedge
+     n_initial_points: 10
+     n_restarts_optimizer: 5
+
+   # Persistence and recovery
+   persistence:
+     enabled: true
+     study_dir: "outputs/optuna_studies"
+     save_frequency: 10  # salvar a cada N trials
+     load_existing: true  # carregar estudos existentes
+
+   # Reporting and visualization
+   reporting:
+     enabled: true
+     top_n_configs: 5
+     include_visualizations: true
+     report_format: "markdown"  # markdown, html, json
+     save_optimization_history: true
+
+   # Validation and robustness
+   validation:
+     enabled: true
+     n_bootstraps: 100
+     confidence_level: 0.95
+     stability_threshold: 0.8
+
+   # Parallel processing
+   parallel:
+     enabled: true
+     max_parallel_jobs: -1  # -1 para usar todos os cores
+     timeout_per_trial: 300  # segundos
+
+   # Resource management
+   resource_management:
+     min_memory_gb: 2.0
+     min_gpu_memory_gb: 4.0
+     memory_limit_gb: 8.0
+     timeout_seconds: 3600
+
+   # Ensemble optimization
+   ensemble:
+     ensemble_type: "weighted"  # voting, stacking, blending, weighted
+     combination_strategy: "performance_based"  # performance_based, diversity_based, adaptive, equal
+     base_models: ["lightgbm", "xgboost", "catboost"]
+     voting_type: "soft"
+     cv_folds: 5
+     holdout_size: 0.2
+     meta_model: "xgboost"
+     weights_update_freq: "epoch"
+     diversity_metric: "correlation"
+     performance_metric: "sharpe_ratio"
+     regime_detection: true
+     regime_window: 50
+
+   # Multi-objective optimization (Pareto front)
+   pareto_front:
+     enabled: true
+     algorithm: "nsga2"  # nsga2, etc.
+     pop_size: 50
+     n_generations: 100
+
+   # Cross-validation settings
+   cross_validation:
+     enabled: true
+     n_splits: 5
+     time_series: true
+     volatility_window: 20
+
+   # Regime detection
+   regime_detection:
+     enabled: true
+     volatility_window: 20
+     volatility_threshold: 0.02
+
+   # Logging and monitoring
+   logging:
+     level: "INFO"
+     log_progress: true
+     log_best_trials: true
+     telegram_notifications: true
+
+# Compliance e Auditoria
+ compliance:
+   public_alert_delay_s: 300  # Atraso para alertas públicos (5 minutos)
+   circuit_breakers:
+     max_daily_trades: 100
+     max_slippage_pct: 0.005
+     max_open_orders: 10
+     max_position_age_h: 24
+     min_profit_target_pct: 0.001
+     max_loss_per_trade_pct: 0.01
+
+ # Battle Arena - Trading System
+battle_arena:
+ enabled: true
+ config_file: "src/battle_arena/config/battle_config.yml"
+
+ # Modo de execução padrão
+ execution:
+   mode: paper  # live, paper, simulation
+   testnet: true
+
+ # Conectores disponíveis
+ connectors:
+   binance:
+     enabled: true
+     api_key_env: "BINANCE_API_KEY"
+     api_secret_env: "BINANCE_API_SECRET"
+   bybit:
+     enabled: false
+     api_key_env: "BYBIT_API_KEY"
+     api_secret_env: "BYBIT_API_SECRET"
+   kucoin:
+     enabled: false
+     api_key_env: "KUCOIN_API_KEY"
+     api_secret_env: "KUCOIN_API_SECRET"
+
+ # Símbolos permitidos
+ symbols: ["BTCUSDT", "ETHUSDT", "BNBUSDT"]
+
+ # Configurações de risco globais
+ risk:
+   max_position_size_pct: 0.1
+   max_total_exposure_pct: 0.5
+   max_daily_loss_pct: 0.05
+   max_drawdown_pct: 0.1
+   max_orders_per_hour: 10
+
+ # Paper trading
+ paper_trading:
+   initial_capital: 10000.0
+   fee_rate: 0.001
+   state_file: "data/battle_arena/paper_trader_state.json"
+
+ # Outputs específicos
+ outputs:
+   logs: "logs/battle_arena.log"
+   reports: "outputs/battle_arena/reports/"
+   backups: "data/battle_arena/backups/"

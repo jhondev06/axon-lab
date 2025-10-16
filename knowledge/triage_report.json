@@ -1,0 +1,73 @@
+{
+  "timestamp": "2025-09-26T09:42:52.796011",
+  "statistics": {
+    "total_tasks": 4,
+    "status_breakdown": {
+      "pending": 4
+    },
+    "priority_breakdown": {
+      "HIGH": 1,
+      "MEDIUM": 2,
+      "CRITICAL": 1
+    },
+    "completion_rate": 0.0,
+    "overdue_tasks": 4,
+    "ready_tasks": 4
+  },
+  "next_tasks": [
+    {
+      "id": "task_20250828_151555_3",
+      "name": "Risk Management Update",
+      "priority": "CRITICAL",
+      "created_at": "2025-08-28T15:15:55.620880",
+      "due_date": "2025-08-29T03:15:55.620880"
+    },
+    {
+      "id": "task_20250828_151555_0",
+      "name": "Data Quality Check",
+      "priority": "HIGH",
+      "created_at": "2025-08-28T15:15:55.620880",
+      "due_date": "2025-08-29T15:15:55.620880"
+    },
+    {
+      "id": "task_20250828_151555_1",
+      "name": "Model Performance Review",
+      "priority": "MEDIUM",
+      "created_at": "2025-08-28T15:15:55.620880",
+      "due_date": "2025-08-31T15:15:55.620880"
+    },
+    {
+      "id": "task_20250828_151555_2",
+      "name": "Feature Engineering Optimization",
+      "priority": "MEDIUM",
+      "created_at": "2025-08-28T15:15:55.620880",
+      "due_date": "2025-09-04T15:15:55.620880"
+    }
+  ],
+  "overdue_tasks": [
+    {
+      "id": "task_20250828_151555_0",
+      "name": "Data Quality Check",
+      "due_date": "2025-08-29T15:15:55.620880",
+      "days_overdue": 27
+    },
+    {
+      "id": "task_20250828_151555_1",
+      "name": "Model Performance Review",
+      "due_date": "2025-08-31T15:15:55.620880",
+      "days_overdue": 25
+    },
+    {
+      "id": "task_20250828_151555_2",
+      "name": "Feature Engineering Optimization",
+      "due_date": "2025-09-04T15:15:55.620880",
+      "days_overdue": 21
+    },
+    {
+      "id": "task_20250828_151555_3",
+      "name": "Risk Management Update",
+      "due_date": "2025-08-29T03:15:55.620880",
+      "days_overdue": 28
+    }
+  ]
+}

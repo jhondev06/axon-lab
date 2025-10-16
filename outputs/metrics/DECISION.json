@@ -1,0 +1,21 @@
+{
+  "model_id": "example_model",
+  "version": "1.0.0",
+  "timestamp": "2024-01-01T12:00:00Z",
+  "pass": true,
+  "metrics": {
+    "accuracy": 0.85,
+    "precision": 0.78,
+    "recall": 0.92
+  },
+  "artifacts": [
+    {
+      "name": "model_weights.h5",
+      "path": "outputs/model_bundles/example_model/model_weights.h5"
+    },
+    {
+      "name": "scaler.pkl",
+      "path": "outputs/model_bundles/example_model/scaler.pkl"
+    }
+  ]
+}

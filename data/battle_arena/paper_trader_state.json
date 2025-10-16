@@ -1,0 +1,84 @@
+{
+  "balance": {
+    "USDT": 9819.82,
+    "BTC": 0.004
+  },
+  "active_orders": {},
+  "order_history": [
+    {
+      "order_id": "paper_1",
+      "symbol": "BTCUSDT",
+      "side": "buy",
+      "order_type": "market",
+      "quantity": 0.001,
+      "price": 45000.0,
+      "status": "filled",
+      "timestamp": "2025-09-26 11:05:49.511362",
+      "executed_price": 45000.0,
+      "executed_quantity": 0.001,
+      "fees": 0.045
+    },
+    {
+      "order_id": "paper_2",
+      "symbol": "BTCUSDT",
+      "side": "buy",
+      "order_type": "market",
+      "quantity": 0.001,
+      "price": 45000.0,
+      "status": "filled",
+      "timestamp": "2025-09-26 11:05:49.616894",
+      "executed_price": 45000.0,
+      "executed_quantity": 0.001,
+      "fees": 0.045
+    },
+    {
+      "order_id": "paper_3",
+      "symbol": "BTCUSDT",
+      "side": "buy",
+      "order_type": "market",
+      "quantity": 0.001,
+      "price": 45000.0,
+      "status": "filled",
+      "timestamp": "2025-09-26 11:06:12.651862",
+      "executed_price": 45000.0,
+      "executed_quantity": 0.001,
+      "fees": 0.045
+    },
+    {
+      "order_id": "paper_4",
+      "symbol": "BTCUSDT",
+      "side": "buy",
+      "order_type": "market",
+      "quantity": 0.001,
+      "price": 45000.0,
+      "status": "filled",
+      "timestamp": "2025-09-26 11:06:12.757798",
+      "executed_price": 45000.0,
+      "executed_quantity": 0.001,
+      "fees": 0.045
+    }
+  ],
+  "positions": {
+    "BTC": {
+      "symbol": "BTCUSDT",
+      "quantity": 0.004,
+      "entry_price": 45000.0,
+      "current_price": 45000.0,
+      "pnl": 0.0,
+      "pnl_percentage": 0.0
+    }
+  },
+  "stats": {
+    "total_trades": 4,
+    "winning_trades": 0,
+    "losing_trades": 0,
+    "total_pnl": 0.0,
+    "total_fees": 0.0,
+    "start_time": "2025-09-26T11:05:49.509530",
+    "last_update": "2025-09-26T11:06:12.757819"
+  },
+  "config": {
+    "initial_capital": 10000.0,
+    "fee_rate": 0.001
+  }
+}

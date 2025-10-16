@@ -1,0 +1,101 @@
+# Battle Arena Configuration
+# Configurações específicas para o sistema de trading
+
+# Modo de execução
+execution:
+  mode: paper  # live, paper, simulation
+  testnet: true  # Usar testnet quando disponível
+
+# Conectores de exchange
+exchanges:
+  binance:
+    enabled: true
+    api_key: ${BINANCE_API_KEY}
+    api_secret: ${BINANCE_API_SECRET}
+    testnet: true
+    rate_limit: 10  # ordens por minuto
+
+  bybit:
+    enabled: false
+    api_key: ${BYBIT_API_KEY}
+    api_secret: ${BYBIT_API_SECRET}
+    testnet: true
+
+  kucoin:
+    enabled: false
+    api_key: ${KUCOIN_API_KEY}
+    api_secret: ${KUCOIN_API_SECRET}
+    sandbox: true
+
+# Símbolos permitidos para trading
+symbols:
+  - BTCUSDT
+  - ETHUSDT
+  - BNBUSDT
+  - ADAUSDT
+  - SOLUSDT
+
+# Configurações de risco
+risk:
+  max_position_size_pct: 0.1  # 10% do capital por posição
+  max_total_exposure_pct: 0.5  # 50% exposição total
+  max_daily_loss_pct: 0.05  # 5% perda diária máxima
+  max_drawdown_pct: 0.1  # 10% drawdown máximo
+  max_orders_per_hour: 10
+  min_order_size_usd: 10.0
+  max_order_size_usd: 1000.0
+
+# Configurações de paper trading
+paper_trading:
+  initial_capital: 10000.0
+  fee_rate: 0.001  # 0.1%
+  state_file: data/battle_arena/paper_trader_state.json
+
+# Configurações de logging
+logging:
+  level: INFO
+  file: logs/battle_arena.log
+  max_file_size: 10MB
+  backup_count: 5
+
+# Configurações de monitoramento
+monitoring:
+  enable_telegram: false
+  telegram_bot_token: ${TELEGRAM_BOT_TOKEN}
+  telegram_chat_id: ${TELEGRAM_CHAT_ID}
+  report_interval: 3600  # segundos
+
+# Configurações de backup
+backup:
+  enable: true
+  interval_hours: 24
+  max_backups: 7
+  backup_dir: data/battle_arena/backups/
+
+# Configurações específicas por símbolo
+symbol_config:
+  BTCUSDT:
+    min_qty: 0.000001
+    max_qty: 100.0
+    price_precision: 2
+    qty_precision: 6
+
+  ETHUSDT:
+    min_qty: 0.00001
+    max_qty: 1000.0
+    price_precision: 2
+    qty_precision: 5
+
+  BNBUSDT:
+    min_qty: 0.001
+    max_qty: 10000.0
+    price_precision: 4
+    qty_precision: 3
+
+# Configurações de emergência
+emergency:
+  enable: true
+  auto_stop_loss: true
+  stop_loss_pct: 0.05  # 5% stop loss automático
+  circuit_breaker: true
+  circuit_breaker_pct: 0.1  # 10% trigger para circuit breaker

@@ -11,14 +11,16 @@ services:
       - BINANCE_API_KEY=${BINANCE_API_KEY}
       - BINANCE_API_SECRET=${BINANCE_API_SECRET}
     volumes:
+      # Mount config file for live updates
+      - ./axon.cfg.yml:/app/axon.cfg.yml:ro
       # Persist data and outputs
       - ./data:/app/data
       - ./outputs:/app/outputs
       - ./knowledge:/app/knowledge
     ports:
-      - "8080:8080"  # For future API
+      - "8080:8080" # For future API
     healthcheck:
-      test: ["CMD", "python", "-c", "from src.battle_arena.core.resilience import get_system_status; s=get_system_status(); exit(0 if 'error' not in s else 1)"]
+      test: [ "CMD", "python", "-c", "from src.battle_arena.core.resilience import get_system_status; s=get_system_status(); exit(0 if 'error' not in s else 1)" ]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -41,6 +43,6 @@ services:
     volumes:
       - ./data:/app/data
       - ./outputs:/app/outputs
-    command: ["python", "-c", "from src.battle_arena.core.paper_trader import PaperTrader; p=PaperTrader(); print('Paper trader ready')"]
+    command: [ "python", "-c", "from src.battle_arena.core.paper_trader import PaperTrader; p=PaperTrader(); print('Paper trader ready')" ]
     profiles:
       - paper

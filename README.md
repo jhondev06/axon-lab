@@ -1,235 +1,253 @@
-# AXON - Neural Research Framework for Quantitative Finance
+# AXON - Production-Grade Neural Research Framework for Quantitative Finance
 
-[![Python](https://img.shields.io/badge/Python-3.8%2B-blue.svg)](https://python.org)
-[![License](https://img.shields.io/badge/License-Apache%202.0-green.svg)](LICENSE)
-[![Tests](https://img.shields.io/badge/Tests-Passing-brightgreen.svg)](tests/)
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.8%2B-blue.svg" alt="Python">
+  <img src="https://img.shields.io/badge/License-Apache%202.0-green.svg" alt="License">
+  <img src="https://img.shields.io/badge/Tests-116%2B%20Passing-brightgreen.svg" alt="Tests">
+  <img src="https://img.shields.io/badge/Docker-Ready-2496ED.svg" alt="Docker">
+  <img src="https://img.shields.io/badge/Status-Production-orange.svg" alt="Status">
+</p>
 
-> **Experimental neural research framework for quantitative finance**  
-> Open-source platform for developing and testing machine learning approaches to financial markets.
+> **Enterprise-grade ML pipeline for algorithmic trading research**  
+> Modular, resilient, and battle-tested framework with live trading capabilities.
 
-## Overview
+---
 
-**AXON** is an experimental research framework designed for quantitative finance applications. It provides a modular environment for developing, backtesting, and analyzing machine learning models in financial contexts.
+## 🚀 Key Features
 
-**Primary Use Cases:**
-- Academic research in quantitative finance
-- Educational exploration of ML in trading
-- Experimental strategy development
-- Open-source contribution to fintech research
+| Feature | Description |
+|---------|-------------|
+| **8-Step ML Pipeline** | End-to-end automation from data to deployment |
+| **Multi-Model Ensemble** | XGBoost, CatBoost, LightGBM, LSTM with intelligent voting |
+| **Battle Arena** | Paper & live trading with complete risk management |
+| **Resilience System** | Auto-reconnection, state persistence, crash recovery |
+| **Telegram Kill Switch** | Remote emergency stop and status monitoring |
+| **Multi-Objective Optimization** | Optuna + NSGA-II for Sharpe/Drawdown balancing |
 
-**Important Notice:** This is a research framework intended for educational and experimental purposes. All results should be considered preliminary and require independent validation.
+---
 
-## Architecture
+## 🏗️ Architecture
 
 ```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Data Layer    │    │  ML Pipeline    │    │ Analysis Layer  │
-│                 │    │                 │    │                 │
-│ • Market Data   │───▶│ • Feature Eng.  │───▶│ • Backtesting   │
-│ • Preprocessing │    │ • Model Training│    │ • Performance   │
-│ • Validation    │    │ • Ensemble      │    │ • Risk Analysis │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                           AXON-V3 ARCHITECTURE                              │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  ┌─────────────┐     ┌─────────────┐     ┌─────────────┐     ┌───────────┐ │
+│  │   main.py   │────▶│  pipeline   │────▶│   brains    │────▶│  outputs  │ │
+│  │ Orchestrator│     │   8 Steps   │     │ Intelligence│     │  Reports  │ │
+│  └─────────────┘     └─────────────┘     └─────────────┘     └───────────┘ │
+│                                                                             │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │                        DATA CONNECTORS                              │   │
+│  │  Yahoo Finance │ Alpha Vantage │ Binance WebSocket │ Synthetic     │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│                                                                             │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │                   BATTLE ARENA (TRADING ENGINE)                     │   │
+│  │  Paper Trading │ Live Trading │ Resilience │ Telegram Bot          │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
 ```
 
-### Core Components
+## 📊 Pipeline Steps
 
-| Component | Purpose | Implementation |
-|-----------|---------|----------------|
-| **Data Pipeline** | Market data processing | WebSocket feeds, normalization |
-| **ML Framework** | Model training/inference | XGBoost, CatBoost, LSTM |
-| **Backtesting** | Historical validation | Event-driven simulation |
-| **Risk Analysis** | Performance evaluation | Standard risk metrics |
-| **Battle Arena** | Model comparison | Controlled testing environment |
+| Step | Name | Description |
+|------|------|-------------|
+| 1 | **Triage** | Queue processing with priority management |
+| 2 | **Dataset** | Multi-source data with intelligent caching |
+| 3 | **Features** | 40+ technical indicators + market microstructure |
+| 4 | **Train** | Multi-model training with early stopping |
+| 5 | **Backtest** | Event-driven simulation with realistic costs |
+| 6 | **Error Lens** | Regime detection and error pattern analysis |
+| 7 | **Decision** | Promotion gates (Sharpe > 1.0, DD < 15%, WR > 45%) |
+| 8 | **Report** | Automated Markdown + Telegram notifications |
 
-## Features
+---
 
-### Machine Learning Pipeline
-- **Feature Engineering**: Technical indicators, market microstructure features
-- **Model Support**: XGBoost, LightGBM, CatBoost, LSTM networks
-- **Ensemble Methods**: Model combination and selection strategies
-- **Cross-Validation**: Time-series aware validation schemes
+## 🛡️ Production Resilience
 
-### Backtesting Framework
-- **Event-Driven**: Realistic order execution simulation
-- **Multiple Assets**: Cryptocurrency, forex data support
-- **Risk Controls**: Position sizing, drawdown limits
-- **Performance Metrics**: Sharpe ratio, maximum drawdown, win rate
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                      RESILIENCE ARCHITECTURE                                 │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│   ┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐      │
+│   │   StateManager  │     │HeartbeatMonitor │     │ReconnectionHandler│    │
+│   │ • Atomic writes │     │ • 30s health    │     │ • Exp backoff   │      │
+│   │ • Auto backup   │     │ • WS liveness   │     │ • Jitter ±30%   │      │
+│   │ • Crash recovery│     │ • Alerts        │     │ • Max 10 retry  │      │
+│   └─────────────────┘     └─────────────────┘     └─────────────────┘      │
+│                                                                             │
+│   ┌─────────────────────────────────────────────────────────────────────┐  │
+│   │                    TELEGRAM KILL SWITCH                             │  │
+│   │   /stop - Emergency stop  │  /status - System status               │  │
+│   │   /start - Resume trading │  /positions - Open positions           │  │
+│   │   /balance - Account info │  /help - Available commands            │  │
+│   └─────────────────────────────────────────────────────────────────────┘  │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
 
-### Research Tools
-- **Battle Arena**: Systematic model comparison
-- **Parameter Optimization**: Bayesian optimization support
-- **Visualization**: Performance charts and analysis
-- **Export Capabilities**: Results export for further analysis
+---
 
-## Quick Start
+## 🐳 Docker Deployment
 
-### Prerequisites
-- Python 3.8+
-- 4GB+ RAM recommended
-- API credentials for data sources (optional)
-
-### Installation
 ```bash
-# Clone repository
-git clone https://github.com/your-username/AXON-V3.git
-cd AXON-V3
+# Clone and start
+git clone https://github.com/jhondev06/axon-lab.git
+cd axon-lab
 
+# Configure environment
+cp .env.example .env
+# Edit .env with your credentials
+
+# Start with Docker
+docker-compose up -d
+
+# View logs
+docker logs -f axon-trading
+
+# Stop
+docker-compose down
+```
+
+**Environment Variables:**
+```env
+TELEGRAM_BOT_TOKEN=your_bot_token
+TELEGRAM_CHAT_ID=your_chat_id
+BINANCE_API_KEY=your_api_key
+BINANCE_API_SECRET=your_api_secret
+```
+
+---
+
+## 💻 Local Development
+
+```bash
 # Install dependencies
 pip install -r requirements.txt
 
-# Run tests
+# Run tests (116+ tests)
 python run_tests.py
 
-# Basic example
-python examples/optimization_example.py
+# Run full pipeline
+python main.py
+
+# Run specific module
+python -c "from src.battle_arena.core.paper_trader import PaperTrader; p=PaperTrader()"
 ```
-
-### Basic Usage
-```python
-from src.models import EnsembleModel
-from src.backtest import BacktestEngine
-
-# Initialize components
-model = EnsembleModel()
-backtest = BacktestEngine()
-
-# Run experimental backtest
-results = backtest.run(symbol='BTCUSDT', days=30)
-print(f"Results: {results.summary()}")
-```
-
-## Research Results
-
-### Experimental Findings
-*Note: All results are from backtesting and should be considered preliminary research findings.*
-
-**Model Performance (Cross-Validation)**
-| Model | Accuracy | Precision | Recall | Notes |
-|-------|----------|-----------|--------|-------|
-| XGBoost | 58.3% | 57.1% | 59.2% | Baseline implementation |
-| CatBoost | 57.9% | 56.8% | 58.7% | Default parameters |
-| LSTM | 55.4% | 54.2% | 56.1% | Simple architecture |
-| Ensemble | 59.7% | 58.4% | 60.3% | Weighted combination |
-
-**Backtesting Metrics (Sample Period)**
-```
-Period Analyzed:        30 days (sample)
-Total Trades:           127
-Average Trade Duration: 4.2 hours
-Transaction Costs:      0.1% per trade
-```
-
-*Disclaimer: Past performance in backtesting does not indicate future results. These are experimental findings for research purposes only.*
-
-## Testing & Validation
-
-### Test Suite
-```bash
-# Run all tests
-python run_tests.py
-
-# Specific test categories
-pytest tests/test_models.py -v
-pytest tests/test_backtest.py -v
-pytest tests/test_features.py -v
-```
-
-### Validation Framework
-- **Unit Tests**: 85+ tests covering core functionality
-- **Integration Tests**: End-to-end pipeline validation
-- **Performance Tests**: Latency and memory benchmarks
-- **Data Validation**: Input/output consistency checks
-
-## Documentation
-
-- **[Architecture Overview](docs/architecture/overview.md)**: System design
-- **[API Reference](docs/api/models-api.md)**: Code documentation
-- **[User Guides](docs/user-guides/)**: Research tutorials
-- **[Development](docs/development/setup.md)**: Contributing guidelines
-
-## Research Contributions
-
-### Academic Applications
-This framework has been designed to support:
-- Quantitative finance research
-- Machine learning methodology development
-- Educational exploration of algorithmic trading
-- Open-source collaboration in fintech
-
-### Known Limitations
-- **Data Quality**: Results depend on input data quality
-- **Market Conditions**: Performance varies with market regimes
-- **Overfitting Risk**: Backtesting may not reflect live performance
-- **Transaction Costs**: Real-world costs may differ from simulations
-
-### Future Research Directions
-- Alternative data integration
-- Reinforcement learning approaches
-- Multi-asset portfolio optimization
-- Risk-adjusted performance metrics
-
-## Contributing
-
-We welcome academic and research contributions:
-
-1. **Research Papers**: Share findings using AXON
-2. **Code Contributions**: Improve algorithms and methods
-3. **Documentation**: Enhance research reproducibility
-4. **Bug Reports**: Help improve framework reliability
-
-See [CONTRIBUTING.md](docs/development/contributing.md) for guidelines.
-
-## License & Usage
-
-### Open Source License
-Released under **Apache License 2.0** for:
-- Academic research
-- Educational purposes
-- Open-source development
-- Commercial research (with proper attribution)
-
-### Research Ethics
-- Always disclose use of this framework in publications
-- Validate findings independently before publication
-- Consider market impact and ethical implications
-- Respect data provider terms of service
-
-## Contact
-
-### Research Collaboration
-- **GitHub Issues**: Technical questions and bug reports
-- **Discussions**: Research ideas and methodology
-- **Academic Inquiries**: research@axon-neural.com
-- **Project Founder**: jhondev06@gmail.com
-
-### Legal Disclaimer
-
-**Educational and Research Use Only**: AXON is designed for educational and research purposes. Financial markets involve substantial risk.
-
-**No Investment Advice**: This framework does not provide investment advice. All results are experimental and for research purposes only.
-
-**Risk Warning**: 
-- Past performance does not guarantee future results
-- Backtesting results may not reflect live trading performance
-- Always validate strategies independently
-- Consider transaction costs and market impact
 
 ---
 
-## License Summary
+## 🧠 ML Models
 
-**Apache License 2.0** provides:
-- ✅ Commercial and academic use
-- ✅ Modification and distribution
-- ✅ Patent protection
-- ✅ Private use
+| Model | Type | Features |
+|-------|------|----------|
+| **XGBoost** | Gradient Boosting | GPU support, early stopping |
+| **CatBoost** | Gradient Boosting | Categorical encoding, GPU |
+| **LightGBM** | Gradient Boosting | Fast training, leaf-wise |
+| **LSTM** | Deep Learning | Bidirectional, attention |
+| **Ensemble** | Meta-Model | Weighted voting, stacking |
 
-**Requirements**:
-- Include original license and copyright notice
-- Document significant changes
+**Optimization:**
+- Optuna TPE sampler
+- NSGA-II multi-objective
+- Time-series cross-validation
+- Pruning for efficiency
 
 ---
 
-*AXON Neural Research Framework - Contributing to open quantitative finance research*
+## 📈 Risk Management
 
-*Licensed under Apache 2.0 | Built for the research community*
+```yaml
+risk:
+  max_position_size_pct: 10%     # Per-trade limit
+  max_total_exposure_pct: 50%    # Portfolio limit
+  max_daily_loss_pct: 5%         # Daily stop
+  max_drawdown_pct: 10%          # Maximum drawdown
+  max_orders_per_hour: 10        # Rate limiting
+```
+
+---
+
+## 📁 Project Structure
+
+```
+AXON-V3/
+├── main.py                    # Pipeline orchestrator
+├── axon.cfg.yml               # Central configuration
+├── docker-compose.yml         # Docker deployment
+├── requirements.txt           # Dependencies (~50 packages)
+│
+├── src/                       # Core implementation
+│   ├── models.py              # ML models (2505 lines)
+│   ├── optimization.py        # Optimization engine (2521 lines)
+│   ├── backtest.py            # Backtesting (554 lines)
+│   ├── features.py            # Feature engineering (679 lines)
+│   ├── brains/                # Intelligence modules
+│   └── battle_arena/          # Trading system (18 files)
+│
+├── tests/                     # Test suite (30+ files, 116+ tests)
+├── docs/                      # Documentation
+└── outputs/                   # Reports, artifacts, logs
+```
+
+---
+
+## 🎯 Performance Thresholds
+
+| Metric | Minimum | Target |
+|--------|---------|--------|
+| Sharpe Ratio | 1.0 | 2.0+ |
+| Max Drawdown | < 15% | < 10% |
+| Win Rate | > 45% | > 55% |
+| Profit Factor | > 1.5 | > 2.0 |
+
+---
+
+## 🔒 Security
+
+- API keys via environment variables only
+- No credentials in code or config
+- Telegram authorization with chat_id whitelist
+- Read-only config mount in Docker
+
+---
+
+## 📚 Documentation
+
+- **[DEEP_DIVE.md](DEEP_DIVE.md)** - Complete architecture documentation
+- **[docs/](docs/)** - API reference and guides
+- **[tests/](tests/)** - Test suite and examples
+
+---
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create feature branch (`git checkout -b feature/amazing`)
+3. Commit changes (`git commit -m 'Add amazing feature'`)
+4. Push to branch (`git push origin feature/amazing`)
+5. Open a Pull Request
+
+---
+
+## 📄 License
+
+**Apache License 2.0** - See [LICENSE](LICENSE) for details.
+
+---
+
+## 👤 Author
+
+**Jhon** - [@jhondev06](https://github.com/jhondev06)
+
+> *"Building production-grade systems, one commit at a time."*
+
+---
+
+<p align="center">
+  <strong>⭐ Star this repo if you find it useful! ⭐</strong>
+</p>

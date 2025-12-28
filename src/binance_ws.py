@@ -20,9 +20,10 @@ from binance.exceptions import BinanceAPIException
 import pandas as pd
 
 class BinanceWebSocketConnector:
-    """Advanced Binance WebSocket connector with robust error handling."""
+    """Advanced Binance WebSocket connector with robust error handling and resilience."""
 
-    def __init__(self, symbol='BTCUSDT', interval='1m', raw_dir='data/raw/rt'):
+    def __init__(self, symbol='BTCUSDT', interval='1m', raw_dir='data/raw/rt',
+                 resilience_manager=None):
         self.symbol = self._map_symbol(symbol)
         self.interval = interval
         self.raw_dir = raw_dir
@@ -34,12 +35,28 @@ class BinanceWebSocketConnector:
         self.reconnect_delay = 5  # seconds
         self.last_message_time = None
         self.message_count = 0
+        
+        # Resilience integration
+        self.resilience_manager = resilience_manager
+        self._jitter_range = 0.3  # ±30% jitter on reconnect delay
+        
+        # Connection event callbacks
+        self._on_connect_callbacks = []
+        self._on_disconnect_callbacks = []
 
         # Ensure directory exists
         os.makedirs(raw_dir, exist_ok=True)
 
         # Setup logging
         self.logger = logging.getLogger(f'BinanceWS.{self.symbol}')
+    
+    def on_connect(self, callback):
+        """Register callback for successful connection."""
+        self._on_connect_callbacks.append(callback)
+    
+    def on_disconnect(self, callback):
+        """Register callback for disconnection."""
+        self._on_disconnect_callbacks.append(callback)
 
     def _map_symbol(self, symbol):
         """Map various symbol formats to Binance format."""
@@ -147,6 +164,12 @@ class BinanceWebSocketConnector:
         self.logger.info(f'Starting Binance WebSocket for {self.symbol} ({self.interval})')
 
         while self.is_running and self.reconnect_attempts < self.max_reconnect_attempts:
+            # Check for emergency stop
+            if self.resilience_manager and self.resilience_manager.state_manager.state.is_emergency_stopped:
+                self.logger.warning("Emergency stop active - not connecting")
+                time.sleep(5)
+                continue
+            
             try:
                 self.twm = ThreadedWebsocketManager()
                 self.twm.start()
@@ -160,6 +183,17 @@ class BinanceWebSocketConnector:
 
                 self.logger.info(f'WebSocket connected for {self.symbol}')
                 self.reconnect_attempts = 0  # Reset on successful connection
+                
+                # Notify resilience manager
+                if self.resilience_manager:
+                    self.resilience_manager.record_ws_message()
+                
+                # Execute connect callbacks
+                for callback in self._on_connect_callbacks:
+                    try:
+                        callback()
+                    except Exception as e:
+                        self.logger.error(f'Connect callback failed: {e}')
 
                 # Monitor connection health
                 self._monitor_connection()
@@ -174,6 +208,12 @@ class BinanceWebSocketConnector:
     def _monitor_connection(self):
         """Monitor connection health and trigger reconnection if needed."""
         while self.is_running:
+            # Check for emergency stop
+            if self.resilience_manager and self.resilience_manager.state_manager.state.is_emergency_stopped:
+                self.logger.warning("Emergency stop - stopping monitoring")
+                self.stop()
+                break
+            
             time.sleep(30)  # Check every 30 seconds
 
             if self.last_message_time:
@@ -184,7 +224,20 @@ class BinanceWebSocketConnector:
                     break
 
     def _handle_reconnection(self):
-        """Handle reconnection logic."""
+        """Handle reconnection logic with exponential backoff + jitter."""
+        import random
+        
+        # Execute disconnect callbacks
+        for callback in self._on_disconnect_callbacks:
+            try:
+                callback()
+            except Exception as e:
+                self.logger.error(f'Disconnect callback failed: {e}')
+        
+        # Notify resilience manager
+        if self.resilience_manager:
+            self.resilience_manager.record_ws_disconnect()
+        
         if self.twm:
             try:
                 self.twm.stop()
@@ -193,9 +246,18 @@ class BinanceWebSocketConnector:
 
         self.reconnect_attempts += 1
         if self.reconnect_attempts < self.max_reconnect_attempts:
-            delay = self.reconnect_delay * self.reconnect_attempts  # Exponential backoff
-            self.logger.info(f'Reconnecting in {delay}s (attempt {self.reconnect_attempts}/{self.max_reconnect_attempts})')
+            # Exponential backoff with jitter
+            base_delay = self.reconnect_delay * (2 ** (self.reconnect_attempts - 1))
+            max_delay = 60  # Cap at 60 seconds
+            base_delay = min(base_delay, max_delay)
+            
+            # Add jitter (±30%) to prevent thundering herd
+            jitter = base_delay * self._jitter_range * (2 * random.random() - 1)
+            delay = max(0.5, base_delay + jitter)
+            
+            self.logger.info(f'Reconnecting in {delay:.1f}s (attempt {self.reconnect_attempts}/{self.max_reconnect_attempts})')
             time.sleep(delay)
+
 
     def stop(self):
         """Stop the WebSocket connection."""
